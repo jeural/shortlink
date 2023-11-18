@@ -1,7 +1,7 @@
 package com.jane.shortlink.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.jane.shortlink.admin.dao.entity.UserDo;
+import com.jane.shortlink.admin.dao.entity.UserDO;
 import com.jane.shortlink.admin.dto.req.UserLoginReqDTO;
 import com.jane.shortlink.admin.dto.req.UserRegisterReqDTO;
 import com.jane.shortlink.admin.dto.req.UserUpdateReqDTO;
@@ -11,7 +11,7 @@ import com.jane.shortlink.admin.dto.resp.UserRespDto;
 /**
  * _@Description: 用户服务层接口
  */
-public interface UserService extends IService<UserDo> {
+public interface UserService extends IService<UserDO> {
     /**
      * 根据用户名查询用户信息
      * @param username 用户名
