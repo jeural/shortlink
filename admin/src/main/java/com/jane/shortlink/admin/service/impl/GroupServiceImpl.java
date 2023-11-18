@@ -29,6 +29,7 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
         // 链式构造器注入
         GroupDO groupDO = GroupDO.builder()
                 .gid(gid)
+                .sortOrder(0)
                 .name(groupName)
                 .build();
         baseMapper.insert(groupDO);
