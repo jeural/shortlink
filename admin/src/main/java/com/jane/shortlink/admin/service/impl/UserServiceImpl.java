@@ -122,7 +122,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         }
         String uuid = UUID.randomUUID().toString().replaceAll("-", "");
         stringRedisTemplate.opsForHash().put("login_" + requestParam.getUsername(), uuid, JSON.toJSONString(userDo));
-        stringRedisTemplate.expire("login_" + requestParam.getUsername(), 30L, TimeUnit.MINUTES);
+        stringRedisTemplate.expire("login_" + requestParam.getUsername(), 3L, TimeUnit.DAYS);
         return new UserLoginRespDTO(uuid);
     }
 
@@ -134,6 +134,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         return stringRedisTemplate.opsForHash().get("login_" + username,token) != null;
     }
 
+    /**
+     * 用户退出登录
+     */
     @Override
     public void logout(String username, String token) {
         // 验证是否登录
