@@ -35,4 +35,5 @@ public class UserInfoDTO {
      * 用户 Token
      */
     private String token;
+
 }
