@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import java.time.LocalDateTime;
 
 /**
- * _@Description: 用户创建/更新时间、数据状态自动填充
+ * _@Description: 创建/更新时间、数据状态自动填充
  */
 
 @Slf4j
