@@ -13,7 +13,7 @@ import com.jane.shortlink.admin.dto.req.ShortLinkGroupSortReqDTO;
 import com.jane.shortlink.admin.dto.req.ShortLinkGroupUpdateReqDTO;
 import com.jane.shortlink.admin.service.GroupService;
 import com.jane.shortlink.admin.toolkit.RandomGenerator;
-import groovy.util.logging.Slf4j;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
