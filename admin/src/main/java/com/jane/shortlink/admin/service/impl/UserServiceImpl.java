@@ -14,6 +14,7 @@ import com.jane.shortlink.admin.dto.req.UserRegisterReqDTO;
 import com.jane.shortlink.admin.dto.req.UserUpdateReqDTO;
 import com.jane.shortlink.admin.dto.resp.UserLoginRespDTO;
 import com.jane.shortlink.admin.dto.resp.UserRespDto;
+import com.jane.shortlink.admin.service.GroupService;
 import com.jane.shortlink.admin.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RBloomFilter;
@@ -41,6 +42,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     private final RBloomFilter<String> userRegisterCachePenetrationBloomFilter;
     private final RedissonClient redissonClient;
     private final StringRedisTemplate stringRedisTemplate;
+    private final GroupService groupService;
 
     /**
      * 根据用户名查找用户信息
@@ -63,6 +65,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         return userRegisterCachePenetrationBloomFilter.contains(username);
     }
 
+    /**
+     * 注册用户
+     */
     @Override
     public void register(UserRegisterReqDTO requestParam) {
         // 用户名已存在
@@ -83,6 +88,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
                     throw new ClientException(USER_EXIST);
                 }
                 userRegisterCachePenetrationBloomFilter.add(requestParam.getUsername());
+                groupService.savaGroup(requestParam.getUsername(), "Default");
             }
         } finally {
             lock.unlock();
