@@ -146,7 +146,11 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 .eq(ShortLinkDO::getEnableStatus, 0)
                 .eq(ShortLinkDO::getDelFlag, 0);
         ShortLinkPageReqDTO resultPage = baseMapper.selectPage(requestParam, queryWrapper);
-        return resultPage.convert(each -> BeanUtil.toBean(each, ShortLinkPageRespDTO.class));
+        return resultPage.convert(each -> {
+            ShortLinkPageRespDTO result = BeanUtil.toBean(each, ShortLinkPageRespDTO.class);
+            result.setDomain("http://" + result.getDomain());
+            return result;
+        });
     }
 
     /**
@@ -178,17 +182,15 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             // 此处需要进行封控
             return;
         }
-        if(!shortUriCreateCachePenetrationBloomFilter.contains(fullShortUrl)) {
-            LambdaQueryWrapper<ShortLinkDO> queryWrapper = Wrappers.lambdaQuery(ShortLinkDO.class)
-                    .eq(ShortLinkDO::getGid, shortLinkGotoDO.getGid())
-                    .eq(ShortLinkDO::getFullShortUrl, fullShortUrl)
-                    .eq(ShortLinkDO::getEnableStatus, 0)
-                    .eq(ShortLinkDO::getDelFlag, 0);
-            ShortLinkDO shortLinkDO = baseMapper.selectOne(queryWrapper);
-            if (shortLinkDO != null) {
-                response.sendRedirect(shortLinkDO.getOriginUrl());
-            }
-        };
+        LambdaQueryWrapper<ShortLinkDO> queryWrapper = Wrappers.lambdaQuery(ShortLinkDO.class)
+                .eq(ShortLinkDO::getGid, shortLinkGotoDO.getGid())
+                .eq(ShortLinkDO::getFullShortUrl, fullShortUrl)
+                .eq(ShortLinkDO::getEnableStatus, 0)
+                .eq(ShortLinkDO::getDelFlag, 0);
+        ShortLinkDO shortLinkDO = baseMapper.selectOne(queryWrapper);
+        if (shortLinkDO != null) {
+            response.sendRedirect(shortLinkDO.getOriginUrl());
+        }
     }
 
     /**
