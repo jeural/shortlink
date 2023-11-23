@@ -23,6 +23,7 @@ import com.jane.shortlink.project.dto.resp.ShortLinkGroupCountQueryRespDTO;
 import com.jane.shortlink.project.dto.resp.ShortLinkPageRespDTO;
 import com.jane.shortlink.project.service.ShortLinkService;
 import com.jane.shortlink.project.toolkit.HashUtil;
+import com.jane.shortlink.project.toolkit.LinkUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -95,6 +96,11 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 throw new ServiceException("短链接生成重复");
             }
         }
+        stringRedisTemplate.opsForValue().set(
+                fullShortUrl,
+                requestParam.getOriginUrl(),
+                LinkUtil.getLinkCatchValidDate(requestParam.getValidDate()),
+                TimeUnit.MILLISECONDS);
         shortUriCreateCachePenetrationBloomFilter.add(fullShortUrl);
         return ShortLinkCreateRespDTO.builder()
                 .fullShortUrl("http://" + shortLinkDO.getFullShortUrl())
