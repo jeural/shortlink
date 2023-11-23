@@ -44,7 +44,7 @@ public class ShortLinkController {
      * 短链接分页查询
      */
     @GetMapping("/api/short-link/admin/v1/page")
-    public Result<IPage<ShortLinkPageRespDTO>> pageShortLink(@RequestBody ShortLinkPageReqDTO requestParam) {
+    public Result<IPage<ShortLinkPageRespDTO>> pageShortLink(ShortLinkPageReqDTO requestParam) {
         return shortLinkRemoteService.pageShortLink(requestParam);
     }
 }
