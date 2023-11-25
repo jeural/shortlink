@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jane.shortlink.project.dao.entity.ShortLinkDO;
 import com.jane.shortlink.project.dao.mapper.ShortLinkMapper;
 import com.jane.shortlink.project.dto.req.RecycleBinRecoverRepDTO;
+import com.jane.shortlink.project.dto.req.RecycleBinRemoveRepDTO;
 import com.jane.shortlink.project.dto.req.RecycleBinSaveRepDTO;
 import com.jane.shortlink.project.dto.req.ShortLinkRecycleBinPageReqDTO;
 import com.jane.shortlink.project.dto.resp.ShortLinkPageRespDTO;
@@ -21,7 +22,7 @@ import static com.jane.shortlink.project.common.constant.RedisKeyConstant.GOTO_I
 import static com.jane.shortlink.project.common.constant.RedisKeyConstant.GOTO_SHORT_LINK_KEY;
 
 /**
- * _@Description:
+ * _@Description: 回收管理接口实现层
  */
 @Service
 @RequiredArgsConstructor
@@ -66,6 +67,9 @@ public class RecycleBinServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLin
         });
     }
 
+    /**
+     * 恢复短链接
+     */
     @Override
     public void recoverRecycleBin(RecycleBinRecoverRepDTO requestParam) {
         LambdaUpdateWrapper<ShortLinkDO> updateWrapper = Wrappers.lambdaUpdate(ShortLinkDO.class)
@@ -80,6 +84,21 @@ public class RecycleBinServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLin
         stringRedisTemplate.delete(
                 String.format(GOTO_IS_NULL_SHORT_LINK_KEY,requestParam.getFullShortUrl())
         );
+    }
+
+    /**
+     * 删除短链接
+     */
+    @Override
+    public void removeRecycleBin(RecycleBinRemoveRepDTO requestParam) {
+        LambdaUpdateWrapper<ShortLinkDO> updateWrapper = Wrappers.lambdaUpdate(ShortLinkDO.class)
+                .eq(ShortLinkDO::getFullShortUrl, requestParam.getFullShortUrl())
+                .eq(ShortLinkDO::getGid, requestParam.getGid())
+                .eq(ShortLinkDO::getEnableStatus, 1)
+                .eq(ShortLinkDO::getDelFlag, 0);
+        ShortLinkDO shortLinkDO = new ShortLinkDO();
+        shortLinkDO.setDelFlag(1);
+        baseMapper.update(shortLinkDO, updateWrapper);
     }
 }
 
