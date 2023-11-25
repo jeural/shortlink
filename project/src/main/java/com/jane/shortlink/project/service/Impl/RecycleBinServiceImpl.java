@@ -1,11 +1,16 @@
 package com.jane.shortlink.project.service.Impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jane.shortlink.project.dao.entity.ShortLinkDO;
 import com.jane.shortlink.project.dao.mapper.ShortLinkMapper;
 import com.jane.shortlink.project.dto.req.RecycleBinSaveRepDTO;
+import com.jane.shortlink.project.dto.req.ShortLinkRecycleBinPageReqDTO;
+import com.jane.shortlink.project.dto.resp.ShortLinkPageRespDTO;
 import com.jane.shortlink.project.service.RecycleBinService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -21,6 +26,7 @@ import static com.jane.shortlink.project.common.constant.RedisKeyConstant.GOTO_S
 public class RecycleBinServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLinkDO> implements RecycleBinService  {
 
     private final StringRedisTemplate stringRedisTemplate;
+
     /**
      * 移至回收站
      */
@@ -39,4 +45,23 @@ public class RecycleBinServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLin
                 String.format(GOTO_SHORT_LINK_KEY, requestParam.getFullShortUrl())
         );
     }
+
+    /**
+     * 回收站分页查询
+     */
+    @Override
+    public IPage<ShortLinkPageRespDTO> pageShortLink(ShortLinkRecycleBinPageReqDTO requestParam) {
+        LambdaQueryWrapper<ShortLinkDO> queryWrapper = Wrappers.lambdaQuery(ShortLinkDO.class)
+                .in(ShortLinkDO::getGid, requestParam.getGidList())
+                .eq(ShortLinkDO::getEnableStatus, 1)
+                .eq(ShortLinkDO::getDelFlag, 0)
+                .orderByDesc(ShortLinkDO::getUpdateTime);
+        IPage<ShortLinkDO> resultPage = baseMapper.selectPage(requestParam, queryWrapper);
+        return resultPage.convert(each -> {
+            ShortLinkPageRespDTO result = BeanUtil.toBean(each, ShortLinkPageRespDTO.class);
+            result.setDomain("http://" + result.getDomain());
+            return result;
+        });
+    }
 }
+
