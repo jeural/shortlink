@@ -623,7 +623,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             // 同一个原链接生成的 shortUri 是相同的
             originUrl += System.currentTimeMillis();
             shortUri = HashUtil.hashToBase62(originUrl);
-            if (!shortUriCreateCachePenetrationBloomFilter.contains(requestParam.getDomain() + "/" + shortUri)) {
+            if (!shortUriCreateCachePenetrationBloomFilter.contains(createShortLinkDefaultDomain  + "/" + shortUri)) {
                 break;
             }
             customGenerateCount++;
