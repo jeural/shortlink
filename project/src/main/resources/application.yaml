@@ -22,6 +22,15 @@ short-link:
   stats:
     locale:
       amap-key: 01865c57863d0865f57bba5410c928ed
+  goto-domain:
+    white-list:
+      enable: true
+      names: '知乎,掘金,博客园,github'
+      details:
+        - zhihu.com
+        - juejin.cn
+        - cnblogs.com
+        - github.com
 
 mybatis-plus:
   configuration:
